@@ -1,9 +1,11 @@
-use std::process;
-
 use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
 
-use crate::enemy::{Enemy, ENEMY_SIZE};
+use crate::{
+    enemy::{Enemy, ENEMY_SIZE},
+    score::Score,
+    stars::{Star, STAR_SIZE},
+};
 
 pub const PLAYER_SIZE: f32 = 64.0;
 pub const PLAYER_SPEED: f32 = 500.0;
@@ -14,7 +16,12 @@ impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(Startup, spawn_player).add_systems(
             Update,
-            (player_movement, confine_player_movement, enemy_hit_player),
+            (
+                player_movement,
+                confine_player_movement,
+                enemy_hit_player,
+                player_hit_star,
+            ),
         );
     }
 }
@@ -58,10 +65,6 @@ pub fn player_movement(
         }
         if keyboard_input.pressed(KeyCode::Down) || keyboard_input.pressed(KeyCode::S) {
             direction += Vec3::new(0.0, -1.0, 0.0);
-        }
-
-        if keyboard_input.pressed(KeyCode::Escape) {
-            process::exit(0x0100);
         }
 
         if direction.length() > 0.0 {
@@ -129,6 +132,34 @@ pub fn enemy_hit_player(
                     ..default()
                 });
                 commands.entity(player_entity).despawn();
+            }
+        }
+    }
+}
+
+pub fn player_hit_star(
+    mut commands: Commands,
+    player_query: Query<&Transform, With<Player>>,
+    star_query: Query<(Entity, &Transform), With<Star>>,
+    asset_server: Res<AssetServer>,
+    mut score: ResMut<Score>,
+) {
+    if let Ok(player_transform) = player_query.get_single() {
+        for (star_entity, star_transform) in star_query.iter() {
+            let distance = player_transform
+                .translation
+                .distance(star_transform.translation);
+            let player_radius = PLAYER_SIZE / 2.0;
+            let star_radius = STAR_SIZE / 2.0;
+
+            if distance < player_radius + star_radius {
+                let sound_effect = asset_server.load("audio/laserLarge_000.ogg");
+                score.value += 1;
+                commands.spawn(AudioBundle {
+                    source: sound_effect,
+                    ..default()
+                });
+                commands.entity(star_entity).despawn();
             }
         }
     }

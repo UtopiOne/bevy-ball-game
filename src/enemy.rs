@@ -35,8 +35,8 @@ pub fn spawn_enemies(
     let window = window_query.get_single().unwrap();
 
     for _ in 0..NUMBER_OF_ENEMIES {
-        let random_x = random::<f32>() * (window.width() - ENEMY_SIZE);
-        let random_y = random::<f32>() * (window.height() - ENEMY_SIZE);
+        let random_x = random::<f32>() * window.width();
+        let random_y = random::<f32>() * window.height();
 
         commands.spawn((
             SpriteBundle {
@@ -87,8 +87,8 @@ pub fn update_enemy_direction(
         }
 
         if direction_changed {
-            let sound_effect_1 = asset_server.load("audio/pluck_001.ogg");
-            let sound_effect_2 = asset_server.load("audio/pluck_002.ogg");
+            let sound_effect_1 = asset_server.load("audio/impactMetal_003.ogg");
+            let sound_effect_2 = asset_server.load("audio/impactMetal_004.ogg");
 
             let sound_effect = if random::<f32>() > 0.5 {
                 sound_effect_1
