@@ -3,6 +3,8 @@ use std::process;
 use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
 
+use crate::enemy::{Enemy, ENEMY_SIZE};
+
 pub const PLAYER_SIZE: f32 = 64.0;
 pub const PLAYER_SPEED: f32 = 500.0;
 
@@ -10,8 +12,10 @@ pub struct PlayerPlugin;
 
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Startup, spawn_player)
-            .add_systems(Update, (player_movement, confine_player_movement));
+        app.add_systems(Startup, spawn_player).add_systems(
+            Update,
+            (player_movement, confine_player_movement, enemy_hit_player),
+        );
     }
 }
 
@@ -100,5 +104,32 @@ pub fn confine_player_movement(
         player_transform.translation = translation;
     } else {
         return;
+    }
+}
+
+pub fn enemy_hit_player(
+    mut commands: Commands,
+    mut player_query: Query<(Entity, &Transform), With<Player>>,
+    enemy_query: Query<&Transform, With<Enemy>>,
+    asset_server: Res<AssetServer>,
+) {
+    if let Ok((player_entity, player_transform)) = player_query.get_single_mut() {
+        for enemy_transform in enemy_query.iter() {
+            let distance = player_transform
+                .translation
+                .distance(enemy_transform.translation);
+            let player_radius = PLAYER_SIZE / 2.0;
+            let enemy_radius = ENEMY_SIZE / 2.0;
+
+            if distance < player_radius + enemy_radius {
+                println!("Enemy hit player! Game over!");
+                let sound_effect = asset_server.load("audio/explosionCrunch_000.ogg");
+                commands.spawn(AudioBundle {
+                    source: sound_effect,
+                    ..default()
+                });
+                commands.entity(player_entity).despawn();
+            }
+        }
     }
 }
