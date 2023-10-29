@@ -21,8 +21,8 @@ impl Plugin for EnemyPlugin {
                 Update,
                 (
                     enemy_movement,
-                    confine_enemy_movement, // confine_enemy_movement should always
-                    update_enemy_direction, // go before update_enemy_direction
+                    update_enemy_direction,
+                    confine_enemy_movement.after(update_enemy_direction),
                     tick_enemy_spawn_timer,
                     spawn_enemies_over_time,
                 ),

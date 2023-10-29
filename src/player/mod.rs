@@ -16,7 +16,7 @@ impl Plugin for PlayerPlugin {
             Update,
             (
                 player_movement,
-                confine_player_movement,
+                confine_player_movement.after(player_movement),
                 enemy_hit_player,
                 player_hit_star,
             ),
