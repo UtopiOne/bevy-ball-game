@@ -1,5 +1,8 @@
 mod camera;
 mod enemy;
+#[path = "resources/enemy_spawn_timer.rs"]
+mod enemy_spawn_timer;
+mod events;
 mod player;
 #[path = "resources/score.rs"]
 mod score;
@@ -18,5 +21,9 @@ fn main() {
         .add_plugins(stars::StarsPlugin)
         .add_plugins(score::ScorePlugin)
         .add_plugins(star_spawn_timer::StarSpawnTimerPlugin)
+        .add_plugins(enemy_spawn_timer::EnemySpawnTimerPlugin)
+        .add_plugins(events::EventsPlugin)
         .run();
 }
+
+

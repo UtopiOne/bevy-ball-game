@@ -3,7 +3,8 @@ use bevy::window::PrimaryWindow;
 
 use crate::{
     enemy::{Enemy, ENEMY_SIZE},
-    score::Score,
+    events::GameOver,
+    score::{self, Score},
     stars::{Star, STAR_SIZE},
 };
 
@@ -112,9 +113,11 @@ pub fn confine_player_movement(
 
 pub fn enemy_hit_player(
     mut commands: Commands,
+    mut game_over_event_writer: EventWriter<GameOver>,
     mut player_query: Query<(Entity, &Transform), With<Player>>,
     enemy_query: Query<&Transform, With<Enemy>>,
     asset_server: Res<AssetServer>,
+    score: Res<Score>,
 ) {
     if let Ok((player_entity, player_transform)) = player_query.get_single_mut() {
         for enemy_transform in enemy_query.iter() {
@@ -132,6 +135,7 @@ pub fn enemy_hit_player(
                     ..default()
                 });
                 commands.entity(player_entity).despawn();
+                game_over_event_writer.send(GameOver { score: score.value });
             }
         }
     }
