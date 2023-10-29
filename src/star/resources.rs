@@ -1,14 +1,6 @@
 use bevy::prelude::*;
 
-pub const STAR_SPAWN_TIME: f32 = 1.0;
-
-pub struct StarSpawnTimerPlugin;
-
-impl Plugin for StarSpawnTimerPlugin {
-    fn build(&self, app: &mut App) {
-        app.init_resource::<StarSpawnTimer>();
-    }
-}
+pub const STAR_SPAWN_TIME: f32 = 3.0;
 
 #[derive(Resource)]
 pub struct StarSpawnTimer {

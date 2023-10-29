@@ -1,22 +1,11 @@
-use bevy::{prelude::*, window::PrimaryWindow};
+use bevy::prelude::*;
+use bevy::window::PrimaryWindow;
 use rand::prelude::*;
 
-use crate::star_spawn_timer::StarSpawnTimer;
+use super::components::*;
+use super::resources::*;
 
-pub const NUMBER_OF_STARS: u32 = 5;
-pub const STAR_SIZE: f32 = 30.0;
-
-pub struct StarsPlugin;
-
-impl Plugin for StarsPlugin {
-    fn build(&self, app: &mut App) {
-        app.add_systems(Startup, spawn_star)
-            .add_systems(Update, (tick_star_spawn_timer, spawn_stars_over_time));
-    }
-}
-
-#[derive(Component)]
-pub struct Star {}
+use super::INITIAL_NUMBER_OF_STARS;
 
 pub fn spawn_star(
     mut commands: Commands,
@@ -25,7 +14,7 @@ pub fn spawn_star(
 ) {
     let window = window_query.get_single().unwrap();
 
-    for _ in 0..NUMBER_OF_STARS {
+    for _ in 0..INITIAL_NUMBER_OF_STARS {
         let random_x = random::<f32>() * window.width();
         let random_y = random::<f32>() * window.height();
 

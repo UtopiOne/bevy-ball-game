@@ -1,29 +1,30 @@
-mod camera;
-mod enemy;
-#[path = "resources/enemy_spawn_timer.rs"]
-mod enemy_spawn_timer;
 mod events;
+mod systems;
+
+pub mod enemy;
 mod player;
-#[path = "resources/score.rs"]
 mod score;
-#[path = "resources/star_spawn_timer.rs"]
-mod star_spawn_timer;
-mod stars;
+pub mod star;
 
 use bevy::prelude::*;
+
+use events::*;
+use systems::*;
+
+use enemy::EnemyPlugin;
+use player::PlayerPlugin;
+use score::ScorePlugin;
+use star::StarPlugin;
 
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
-        .add_plugins(camera::CameraPlugin)
-        .add_plugins(player::PlayerPlugin)
-        .add_plugins(enemy::EnemiesPlugin)
-        .add_plugins(stars::StarsPlugin)
-        .add_plugins(score::ScorePlugin)
-        .add_plugins(star_spawn_timer::StarSpawnTimerPlugin)
-        .add_plugins(enemy_spawn_timer::EnemySpawnTimerPlugin)
-        .add_plugins(events::EventsPlugin)
+        .add_event::<GameOver>()
+        .add_plugins(EnemyPlugin)
+        .add_plugins(PlayerPlugin)
+        .add_plugins(ScorePlugin)
+        .add_plugins(StarPlugin)
+        .add_systems(Startup, spawn_camera)
+        .add_systems(Update, (exit_game, handle_game_over))
         .run();
 }
-
-

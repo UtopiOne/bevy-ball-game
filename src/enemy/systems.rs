@@ -1,35 +1,10 @@
 use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
-
 use rand::prelude::*;
 
-use crate::enemy_spawn_timer::EnemySpawnTimer;
-
-pub const NUMBER_OF_ENEMIES: usize = 4;
-pub const ENEMY_SPEED: f32 = 200.0;
-pub const ENEMY_SIZE: f32 = 64.0;
-
-pub struct EnemiesPlugin;
-
-impl Plugin for EnemiesPlugin {
-    fn build(&self, app: &mut App) {
-        app.add_systems(Startup, spawn_enemies).add_systems(
-            Update,
-            (
-                update_enemy_direction,
-                enemy_movement,
-                confine_enemy_movement,
-                tick_enemy_spawn_timer,
-                spawn_enemies_over_time,
-            ),
-        );
-    }
-}
-
-#[derive(Component)]
-pub struct Enemy {
-    pub direction: Vec2,
-}
+use super::components::*;
+use super::resources::*;
+use super::{ENEMY_SIZE, ENEMY_SPEED, INITIAL_NUMBER_OF_ENEMIES};
 
 pub fn spawn_enemies(
     mut commands: Commands,
@@ -38,7 +13,7 @@ pub fn spawn_enemies(
 ) {
     let window = window_query.get_single().unwrap();
 
-    for _ in 0..NUMBER_OF_ENEMIES {
+    for _ in 0..INITIAL_NUMBER_OF_ENEMIES {
         let random_x = random::<f32>() * window.width();
         let random_y = random::<f32>() * window.height();
 
