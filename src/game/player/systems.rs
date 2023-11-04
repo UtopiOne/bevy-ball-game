@@ -1,14 +1,14 @@
 use bevy::{prelude::*, window::PrimaryWindow};
 
-use crate::enemy::components::*;
 use crate::events::*;
-use crate::score::resources::*;
-use crate::star::components::*;
+use crate::game::enemy::components::*;
+use crate::game::score::resources::*;
+use crate::game::star::components::*;
 
 use super::components::*;
 use super::{PLAYER_SIZE, PLAYER_SPEED};
-use crate::enemy::ENEMY_SIZE;
-use crate::star::STAR_SIZE;
+use crate::game::enemy::ENEMY_SIZE;
+use crate::game::star::STAR_SIZE;
 
 pub fn spawn_player(
     mut commands: Commands,
