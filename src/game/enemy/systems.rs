@@ -140,3 +140,9 @@ pub fn confine_enemy_movement(
         }
     }
 }
+
+pub fn despawn_enemies(mut commands: Commands, enemy_query: Query<Entity, With<Enemy>>) {
+    for enemy_entity in enemy_query.iter() {
+        commands.entity(enemy_entity).despawn();
+    }
+}
