@@ -11,36 +11,38 @@ pub fn exit_game(
 }
 
 pub fn transition_to_game_state(
-    mut commands: Commands,
     keyboard_input: Res<Input<KeyCode>>,
     app_state: Res<State<AppState>>,
+    mut next_app_state: ResMut<NextState<AppState>>,
 ) {
     if keyboard_input.just_pressed(KeyCode::G) {
         if **app_state != AppState::Game {
-            commands.insert_resource(NextState(Some(AppState::Game)));
+            next_app_state.set(AppState::Game);
             println!("Entered AppState::Game!");
         }
     }
 }
 
 pub fn transition_to_main_menu_state(
-    mut commands: Commands,
     keyboard_input: Res<Input<KeyCode>>,
     app_state: Res<State<AppState>>,
+    mut next_app_state: ResMut<NextState<AppState>>,
 ) {
     if keyboard_input.just_pressed(KeyCode::M) {
         if **app_state != AppState::MainMenu {
-            commands.insert_resource(NextState(Some(AppState::MainMenu)));
-            commands.insert_resource(NextState(Some(SimulationState::Paused)));
+            next_app_state.set(AppState::MainMenu);
             println!("Entered AppState::MainMenu!");
         }
     }
 }
 
-pub fn handle_game_over(mut commands: Commands, mut game_over_event_reader: EventReader<GameOver>) {
-    for event in game_over_event_reader.iter() {
+pub fn handle_game_over(
+    mut game_over_event_reader: EventReader<GameOver>,
+    mut app_state_next_state: ResMut<NextState<AppState>>,
+) {
+    for event in game_over_event_reader.read() {
         println!("Your final score is: {}", event.score.to_string());
-        commands.insert_resource(NextState(Some(AppState::GameOver)));
+        app_state_next_state.set(AppState::GameOver);
     }
 }
 
