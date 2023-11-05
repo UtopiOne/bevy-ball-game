@@ -1,4 +1,4 @@
-use crate::{events::*, game::SimulationState, AppState};
+use crate::{events::*, AppState};
 use bevy::{app::AppExit, prelude::*, window::PrimaryWindow};
 
 pub fn exit_game(

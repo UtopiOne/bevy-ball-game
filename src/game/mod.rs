@@ -21,6 +21,8 @@ impl Plugin for GamePlugin {
         app.add_state::<SimulationState>()
             // Events
             .add_event::<GameOver>()
+            // On enter
+            .add_systems(OnEnter(AppState::Game), pause_simulation)
             // Plugins
             .add_plugins(EnemyPlugin)
             .add_plugins(PlayerPlugin)
@@ -30,7 +32,9 @@ impl Plugin for GamePlugin {
             .add_systems(
                 Update,
                 (toggle_simulation.run_if(in_state(AppState::Game)),),
-            );
+            )
+            // On exit
+            .add_systems(OnExit(AppState::Game), resume_simulation);
     }
 }
 
